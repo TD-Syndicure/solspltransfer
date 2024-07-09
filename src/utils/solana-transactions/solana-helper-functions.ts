@@ -11,20 +11,22 @@ import {
 import promiseRetry from "promise-retry";
 import { sleep } from "../helper-functions";
 import { PriorityFeeLevel, PriorityFeeResponse } from "../types/types";
+import axios from "axios";
 
+// Returns a connection to the mainnet. Note: replace this with your own rpc url.
 export const mainConnection = async () => {
     return await new Connection("https://api.mainnet-beta.solana.com", {
         commitment: "max",
     });
 };
 
+// Optional function to fetch the priority fee estimate for a transaction based on latest transaction data.
 export async function getPriorityFeeEstimate(
     rpcUrl: string,
     priorityLevel: PriorityFeeLevel,
     transaction: string
 ): Promise<number> {
-    const response = await fetch(rpcUrl, {
-        method: "POST",
+    const response = await axios.post(rpcUrl, {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
             jsonrpc: "2.0",
@@ -39,7 +41,7 @@ export async function getPriorityFeeEstimate(
         }),
         cache: "no-cache"
     });
-    const data: PriorityFeeResponse = await response.json();
+    const data: PriorityFeeResponse = await response.data;
 
     if (!data.result) {
         throw new Error("Failed to get priority fee estimate");
@@ -48,6 +50,7 @@ export async function getPriorityFeeEstimate(
     return parseInt(data.result.priorityFeeEstimate.toFixed(0));
 }
 
+// Simulate a transaction and return the compute units to size your tx correctly and logs for the transaction, helpful for any debugging.
 export async function simulateAndGetTxCu(
     connection: Connection,
     transaction: VersionedTransaction
@@ -77,6 +80,7 @@ export async function simulateAndGetTxCu(
     };
 }
 
+// Simulate a transaction and return the logs and error if any, useful for debugging.
 export async function simulateTx(
     connection: Connection,
     transaction: VersionedTransaction
@@ -92,6 +96,7 @@ export async function simulateTx(
     return { logs: simulatedTx.value.logs, err: simulatedTx.value.err };
 }
 
+// Returns the signature of a transaction after signing.
 export function getSignature(
     transaction: Transaction | VersionedTransaction
 ): string {
@@ -117,6 +122,7 @@ const SEND_OPTIONS = {
     skipPreflight: true,
 };
 
+// Transaction sender and waiter for tx confirmation, re-sends until blockheight is exceeded, returns the transaction response on success.
 export async function transactionSenderAndConfirmationWaiter({
     connection,
     serializedTransaction,

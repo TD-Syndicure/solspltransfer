@@ -1,11 +1,14 @@
 import { ComputeBudgetProgram } from "@solana/web3.js";
 import { createMemoInstruction } from "@solana/spl-memo";
 
+//Set the compute unit limit for the transaction using the ComputeBudgetProgram and set units to the desired limit
 export const computeUnitIx = (units: number) => {
     return ComputeBudgetProgram.setComputeUnitLimit({
         units,
     });
 };
+
+//Set the priority fee for the transaction using the ComputeBudgetProgram and set microLamports to the desired fee
 export const priorityFeeIx = (microLamports: number) => {
     return ComputeBudgetProgram.setComputeUnitPrice({
         microLamports,

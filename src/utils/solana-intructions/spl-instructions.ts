@@ -14,6 +14,7 @@ import {
 } from "@solana/spl-token";
 import { createMemo } from "./misc-instructions";
 
+// Returns the associated token account for a wallet and token mint
 export const walletAta = async (
     wallet: PublicKey,
     mint: PublicKey,
@@ -27,6 +28,7 @@ export const walletAta = async (
     );
 };
 
+// Returns a transaction instruction array for a token transfer between wallets creating the ATA if it doesn't exist
 export const splTransferIxAndCreateAta = async (
     fromPubkey: PublicKey,
     toPubkey: PublicKey,
@@ -98,6 +100,7 @@ export const splTransferIxAndCreateAta = async (
     return transferIx;
 };
 
+// Returns a transaction instruction array for a token transfer between wallets without creating the ATA, only use if you know the ATA exists
 export const splInstructionsWithoutCreateAta = async (
     fromPubkey: PublicKey,
     toPubkey: PublicKey,
