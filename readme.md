@@ -1,23 +1,65 @@
-# Basic Solana SPL transfer
+# Solana SPL transfer script
 
 ### About this repo
-This repo contains simple example functions that show how to transfer SPL tokens on the Solana blockchain using the web3.js library.
+This repo contains simple function to transfer solana spl-tokens using durable nonces.
 
 ### How to use the code
-1. Create an express server or server using a framework of your choice.
-2. Install dependencies listed in package.json.
-3. Copy the utils folder into your project.
-4. Create a route like the basic example in routes.ts.
-5. Run the server.
-6. Using postman or a similar tool, send a POST request to the route you created with the following body:
+1. Populate the function with the data for the transfer you want to create.
+```typescript
+transferSplToken(
+    "from", // sender address as string
+    "to", // receiver address as string
+    "tokenAddress", // mint address as string (note not the user ata)
+    100, // amount to transfer as number
+    "nonceAccountPubkey", // nonce account pubkey as string
+    "nonceSignerPubkey" // nonce account authority public key as string
+)
+```
+2. Run the function to get the tx and use this to sign with the from account and the nonceSigner and send the transaction.
+3. Optionally return the tx from an api endpoint to sign and send the transaction.
 
-```json
-{
-    "from": "your_wallet_address", // string
-    "to": "recipient_wallet_address", // string
-    "tokenAddress": "token_address", // string
-    "amount": 1 // number
+
+### Example log output
+```bash
+VersionedTransaction {
+  signatures: [
+    Uint8Array(64) [
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0
+    ],
+    Uint8Array(64) [
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0
+    ]
+  ],
+  message: MessageV0 {
+    header: {
+      numRequiredSignatures: 2,
+      numReadonlySignedAccounts: 1,
+      numReadonlyUnsignedAccounts: 5
+    },
+    staticAccountKeys: [
+      [PublicKey [PublicKey(ExP5nq9j4sixx4UZ523Rhku9rjpuMVJyboaaRJ2XPiBo)]],
+      [PublicKey [PublicKey(EbsUZEFAU23Z2SgAymFtU2hADLiyNLzaPLKiJfvpKnE7)]],
+      [PublicKey [PublicKey(5NUAJckcnpGSdDsocx9hBR2zCBos3BTadqurCQoiGyYd)]],
+      [PublicKey [PublicKey(6cD6JX9rXFr7WfofyQARUXExJrSJaJNNFkvQcpTPXvR2)]],
+      [PublicKey [PublicKey(ComputeBudget111111111111111111111111111111)]],
+      [PublicKey [PublicKey(11111111111111111111111111111111)]],
+      [PublicKey [PublicKey(SysvarRecentB1ockHashes11111111111111111111)]],
+      [PublicKey [PublicKey(MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr)]],
+      [PublicKey [PublicKey(TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA)]]
+    ],
+    recentBlockhash: 'DwvygxzrcTq98ynmfBChcX2wv4QGTzA3hJhsq3K7s8Vg',
+    compiledInstructions: [ [Object], [Object], [Object], [Object], [Object] ],
+    addressTableLookups: []
+  }
 }
 ```
-7. The server will return a versioned transaction which can be used to sign and send the transaction to the Solana network via a wallet on a client or keypair signer on a server.
-
